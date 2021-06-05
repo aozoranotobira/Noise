@@ -1,0 +1,142 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes">
+		<title>Colored Noise - For Misophonia</title>
+		<link rel="manifest" href="manifest.json">
+		<link rel="stylesheet" href="./css/main.css">
+		<link rel="shortcut icon" href="favicon.ico">
+		<script src="./js/main.js"></script>
+		<script type="text/javascript">
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register("service-worker.js").then(function () {
+				console.log("[Service Worker] Register");
+			});
+		}
+		</script>
+	</head>
+	<body>
+		<h1>ノイズ再生 for ミソフォニア</h1>
+		<div class="tabs">
+			<input type="radio" id="noise" name="tab_item" checked />
+			<label class="tab_item" for="noise">ノイズ再生</label>
+			<input type="radio" id="misophonia" name="tab_item" />
+			<label class="tab_item" for="misophonia">ミソフォニア</label>
+			<input type="radio" id="contact" name="tab_item" />
+			<label class="tab_item" for="contact">お問い合わせ</label>
+			<div class="tab_content" id="noise_content">
+				<table class="table_noise">
+					<tr>
+						<th class="th_header">ホワイトノイズ</th>
+						<td class="td_range"><input type="range" class="input-range" id="white-range" min="0" max="2" step="0.01" value="0" onchange="changeRange(whiteGain, 'white-range');" /></td>
+					</tr>
+					<tr>
+						<th class="th_header">ピンクノイズ</th>
+						<td class="td_range"><input type="range" class="input-range" id="pink-range" min="0" max="4" step="0.01" value="0" onchange="changeRange(pinkGain, 'pink-range');" /></td>
+					</tr>
+					<tr>
+						<th class="th_header">ブラウンノイズ</th>
+						<td class="td_range"><input type="range" class="input-range" id="brown-range" min="0" max="4" step="0.01" value="0" onchange="changeRange(brownGain, 'brown-range');" /></td>
+					</tr>
+				</table>
+				<div>
+					<input type="checkbox" class="check_play" id="play-check" onchange="changeCheck();">
+						<label class="label_play" id="play-label" for="play-check">
+							<img class="img_symbol" id="play-img" src="./img/play.png" />
+						</label>
+					</input>
+				</div>
+				<h4>ノイズでミソフォニアのトリガー音を打ち消すことで、不快なミソフォニア症状の自己防衛をしています。</h4>
+				<table class="table_type">
+					<tr>
+						<th class="th_name">ホワイトノイズ</th>
+						<td class="td_example">シャー</td>
+						<td class="td_feature">あらゆる種類の音をかき消しやすい</td>
+					</tr>
+					<tr>
+						<th class="th_name">ピンクノイズ</th>
+						<td class="td_example">ザー</td>
+						<td class="td_feature">ホワイトノイズとブラウンノイズの中間</td>
+					</tr>
+					<tr>
+						<th class="th_name">ブラウンノイズ</th>
+						<td class="td_example">ゴー</td>
+						<td class="td_feature">柔らかい音で長時間聞いても疲れにくい</td>
+					</tr>
+				</table>
+			</div>
+			<div class="tab_content" id="misophonia_content">
+				<p>
+					<h2>こんな音が苦手です</h2>
+					<h3>
+						&check;咳<br/>
+						&check;咳払い<br/>
+						&check;痰を切る音<br/>
+						&check;鼻をすする音<br/>
+						&check;鼻をかむ音<br/>
+						&check;ガムを噛む音<br/>
+						&check;飴を舐める音<br/>
+					</h3>
+				</p>
+				<p>
+					<h2>”ミソフォニア”について</h2>
+					<h3>この漫画だけでも読んでいただきたいです！</h3>
+					<a href="https://nlab.itmedia.co.jp/nl/articles/1908/20/news066.html" target="_blank" rel="noopener noreferrer">知り合いがミソフォニア（音嫌悪症）という病気だった話</a><br/>
+					<h3>実際にミソフォニアの症状がある方が発信している情報です。<br/>共感できるし役立つ内容が多いです。</h3>
+					<a href="https://shoiblog.com/category/life/misophonia/" target="_blank" rel="noopener noreferrer">SHOIさんのブログ</a><br/>
+					<a href="https://beauty-literacy.com/" target="_blank" rel="noopener noreferrer">Hazimeさんのサイト</a><br/>
+				</p>
+			</div>
+			<div class="tab_content" id="contact_content">
+				<iframe class="google_forms" src="https://docs.google.com/forms/d/e/1FAIpQLSddQVpPMfE7692Sv9o7K6vszuEuzRN2mpeGV1cg9xas7UQOSw/viewform?embedded=true"></iframe>
+			</div>
+		</div>
+		<script type="text/javascript">
+
+		// 初期表示時
+		window.onload = function () {
+			let cookieValue = (getCookieValue(cookieName) ?? '0,0,0').split(',');
+			setElementValue("white-range", cookieValue[0]);
+			setElementValue("pink-range", cookieValue[1]);
+			setElementValue("brown-range", cookieValue[2]);
+			whiteGain.gain.value = cookieValue[0];
+			pinkGain.gain.value = cookieValue[1];
+			brownGain.gain.value = cookieValue[2];
+		}
+
+		// スライダー変更時
+		function changeRange(gain, range) {
+			gain.gain.value = document.getElementById(range).value;
+			let rangeValue = getElementValue("white-range") + "," + getElementValue("pink-range") + "," + getElementValue("brown-range");
+			setCookieValue(cookieName, rangeValue);
+		};
+
+		// 再生・停止
+		function changeCheck() {
+			if (document.getElementById("play-check").checked) {
+				audioContext.resume();
+				document.getElementById("play-img").src = "./img/symbol-irr-10_transparent.png";
+			} else {
+				audioContext.suspend();
+				document.getElementById("play-img").src = "./img/play.png";
+			}
+		}
+
+		const cookieName = 'range';
+		function getCookieValue(name) {
+			let value = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+			return value ? value.pop() : null;
+		}
+		function setCookieValue(name, value) {
+			document.cookie = name + "=" + value + "; Max-Age=604800; SameSite=strict; ";
+		}
+
+		function getElementValue(id) {
+			return document.getElementById(id).value;
+		}
+		function setElementValue(id, value) {
+			document.getElementById(id).value = value;
+		}
+		</script>
+	</body>
+</html>
